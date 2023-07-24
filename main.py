@@ -27,7 +27,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     profession = update.message.text
     response_array = ""     
     await context.bot.send_message(chat_id=update.effective_chat.id, text="минуточку...")
-    for i in range(1,20):
+    for i in range(1,10):
 
       url = f"https://belmeta.com/vacansii?l=Брест&sort=date&page={i}"
       response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
