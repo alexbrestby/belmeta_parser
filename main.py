@@ -20,13 +20,14 @@ logging.basicConfig(
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Введите название вакансии, которую ищете...")
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     count = 0
     profession = update.message.text
     response_array = ""     
-    for i in range(1,10):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="минуточку...")
+    for i in range(1,20):
 
       url = f"https://belmeta.com/vacansii?l=Брест&sort=date&page={i}"
       response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -39,7 +40,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
       # strongCheck(titles)
 
       for j in range(len(titles)):
-        if (titles[j].text.lower().__contains__(profession)):
+        if (titles[j].text.lower().__contains__(profession.lower())):
             count+=1
             response_array += f"{count} - {titles[j].text}\n{company[j].text}\nhttps://belmeta.com{titles[j]['href']}\n\n"
     if response_array == "":
