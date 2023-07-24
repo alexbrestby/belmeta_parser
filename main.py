@@ -1,8 +1,13 @@
+import os
 import logging
 import requests
 from bs4 import BeautifulSoup
 from telegram import Update
+from dotenv import load_dotenv
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, ContextTypes, CommandHandler
+
+load_dotenv()
+token = os.getenv("BELMETA_TOKEN")
 
 def strongCheck(titles):
   for strongList in titles:
@@ -27,7 +32,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     profession = update.message.text
     response_array = ""     
     await context.bot.send_message(chat_id=update.effective_chat.id, text="минуточку...")
-    for i in range(1,20):
+    for i in range(1,10):
 
       url = f"https://belmeta.com/vacansii?l=Минск&sort=date&page={i}"
       response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -48,7 +53,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=response_array)
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('6551954937:AAH8m-cZyWYxNmc65YIRa7tsT1IxnfYUAHo').build()
+    application = ApplicationBuilder().token(token).build()
     
     start_handler = CommandHandler('start', start)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
