@@ -1,8 +1,13 @@
+import os
 import logging
 import requests
 from bs4 import BeautifulSoup
 from telegram import Update
+from dotenv import load_dotenv
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, ContextTypes, CommandHandler
+
+load_dotenv()
+token = os.getenv("BELMETA_TOKEN")
 
 def strongCheck(titles):
   for strongList in titles:
