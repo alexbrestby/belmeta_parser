@@ -30,27 +30,46 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     count = 0
     profession = update.message.text
-    response_array = ""     
+    response_array_belmeta = ""     
+    response_array_hh = ""     
     await context.bot.send_message(chat_id=update.effective_chat.id, text="минуточку...")
-    for i in range(1,10):
+    for i in range(0,20):
 
-      url = f"https://belmeta.com/vacansii?l=Брест&sort=date&page={i}"
-      response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+      url_belmeta = f"https://belmeta.com/vacansii?l=Брест&sort=date&page={i}"
+      url_hh = f"https://hh.ru/search/vacancy?area=1007&order_by=publication_time&page={i}"
+      
+      response_belmeta = requests.get(url_belmeta, headers={'User-Agent': 'Mozilla/5.0'})
+      response_hh = requests.get(url_hh, headers={'User-Agent': 'Mozilla/5.0'})
 
-      soup = BeautifulSoup(response.content, "html.parser")
+      soup_belmeta = BeautifulSoup(response_belmeta.content, "html.parser")
+      soup_hh = BeautifulSoup(response_hh.content, "html.parser")
 
-      titles = soup.select(".title a")
-      company = soup.select(".company")
+      titles_belmeta = soup_belmeta.select(".title a")
+      titles_hh = soup_hh.select(".serp-item__title")
+
+      company_belmeta = soup_belmeta.select(".company")
+      company_hh = soup_hh.select(".bloko-link_kind-tertiary")
       print(profession)
       # strongCheck(titles)
 
-      for j in range(len(titles)):
-        if (titles[j].text.lower().__contains__(profession.lower())):
+      for j in range(len(titles_belmeta)):
+        if (titles_belmeta[j].text.lower().__contains__(profession.lower())):
             count+=1
-            response_array += f"{count} - {titles[j].text}\n{company[j].text}\nhttps://belmeta.com{titles[j]['href']}\n\n"
-    if response_array == "":
-        response_array = "Ничего не найдено"
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=response_array)
+            response_array_belmeta += f"{count} - {titles_belmeta[j].text}\n{company_belmeta[j].text}\nhttps://belmeta.com{titles_belmeta[j]['href']}\n\n"
+
+      for k in range(len(titles_hh)):
+        if (titles_hh[k].text.lower().__contains__(profession.lower())):
+            count+=1
+            response_array_hh += f"{count} - {titles_hh[k].text}\n{company_hh[k].text}\n{titles_hh[k]['href']}\n\n"
+
+    if response_array_belmeta == "":
+      response_array_belmeta = "На Белмете ничего не найдено"
+
+    if response_array_hh == "":
+      response_array_hh = "На Хедхантере ничего не найдено"
+
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response_array_hh)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response_array_belmeta)
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(token).build()
